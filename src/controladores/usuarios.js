@@ -1,4 +1,9 @@
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
+
+require('dotenv').config();
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_ID);
 
 const Usuario = require('./../modelos/usuario');
 
@@ -38,6 +43,18 @@ const UsuariosController = {
         })
         .catch(response => {
 
+        });
+    },
+    googleLogin: (req, res) => {
+        const idToken = req.body.googleToken;
+
+        googleClient.verifyIdToken({ idToken: idToken }).then(response => {
+            const user = response.getPayload();
+            console.log('Si se valido el token', user);
+            // Buscar el usuario, obtener el ID, generar el token con JWT y responder el token
+            res.send({token:1235438});
+        }).catch(err => {
+            res.status(401).send({ msg: 'token invalido' });
         });
     },
     registro: (req, res) => {
